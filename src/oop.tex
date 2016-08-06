@@ -52,14 +52,14 @@ The header contains the typical include guard:
 #endif /* MYAPP_SPELL_CHECKER_H */
 \end{lstlisting}
 
-It permits to protect the header from being included several times in the same *.c file.
+It protects the header from being included several times in the same *.c file.
 
 \subsubsection{C++ Support}
 The \lstinline{G_BEGIN_DECLS}/\lstinline{G_END_DECLS} pair permits the header to be included from C++ code. It is more important for a library, but it is also a good practice to add those macros in application code too, even if the application doesn't use C++. That way an application class could be moved to a library easily (it can be hard to notice that the \lstinline{G_BEGIN_DECLS} and \lstinline{G_END_DECLS} macros are missing). And if the desire arises, the application could be ported to C++ incrementally.
 
 \subsubsection{\#include}
 \label{oop-include-in-header}
-There are several ways to organize the \lstinline{#include}'s in a C codebase. The convention in GLib/GTK+ is that including a header in a *.c file should not require to include another header beforehand.
+There are several ways to organize the \lstinline{#include}'s in a C codebase. The convention in GLib/GTK+ is that including a header in a *.c file should not require including another header beforehand.
 
 \path{myapp-spell-checker.h} contains the following \lstinline{#include}:
 \begin{lstlisting}
@@ -147,17 +147,17 @@ For a comprehensive list of GI annotations, see the GObject Introspection wiki~\
 \subsubsection{Static vs Non-Static Functions}
 In the example code, you can see that the \lstinline{load_dictionary()} function has been marked as \lstinline{static}. It is in fact a good practice in C to mark internal functions as \lstinline{static}. A \lstinline{static} function can be used only in the same *.c file. On the other hand, a public function should be non-static and have a prototype in a header.
 
-To ensure that a code follows this convention, there is the \texttt{-Wmissing-prototypes} GCC warning option\footnote{When using the Autotools, there is the \texttt{AX\_COMPILER\_FLAGS} Autoconf macro that enables, among other things, that GCC flag.}.
+To ensure that code follows this convention, there is the \texttt{-Wmissing-prototypes} GCC warning option\footnote{When using the Autotools, there is the \texttt{AX\_COMPILER\_FLAGS} Autoconf macro that enables, among other things, that GCC flag.}.
 
 Also, contrarily to a public function, a \lstinline{static} function doesn't require to be prefixed by the project and class namespaces (here, \lstinline{myapp_spell_checker}).
 
 \subsubsection{Defensive Programming}
 Each public function checks its preconditions with the \lstinline{g_return_if_fail()} or \lstinline{g_return_val_if_fail()} debugging macros, as described in section~\ref{glib-debugging-macros} p.~\pageref{glib-debugging-macros}. The \emph{self} parameter is also checked, to see if it is not \lstinline{NULL}, except for the destructor, \lstinline{myapp_spell_checker_free()}, to be consistent with \lstinline{free()} and \lstinline{g_free()} which accept a \lstinline{NULL} parameter for convenience.
 
-Note that the \lstinline{g_return} macros should be used only for the entry points of a class, that is, in its public functions. You can usually assume that the parameters passed to a \lstinline{static} function are valid, especially the \emph{self} parameter. It is though sometimes useful to check an argument of a \lstinline{static} function with \lstinline{g_assert()}, to make the code more robust and self-documented.
+Note that the \lstinline{g_return} macros should be used only for the entry points of a class, that is, in its public functions. You can usually assume that the parameters passed to a \lstinline{static} function are valid, especially the \emph{self} parameter. However, it is sometimes useful to check an argument of a \lstinline{static} function with \lstinline{g_assert()}, to make the code more robust and self-documented.
 
 \subsubsection{Coding Style}
-Finally, it is worth explaining a few things about the coding style. You are encouraged to use early on the same coding style for your project, because it can be something difficult to change afterwards. If every program has different code conventions, it's a nightmare for someone willing to contribute.
+Finally, it is worth explaining a few things about the coding style. You are encouraged early on to use the same coding style for your project, because it can be something difficult to change afterwards. If every program has different code conventions, it's a nightmare for someone willing to contribute.
 
 Here is an example of a function definition:
 \begin{lstlisting}
@@ -207,9 +207,9 @@ To learn more about the coding style used in GLib, GTK+ and GNOME, read the GNOM
 
 GObject goes several steps further into Object-Oriented Programming, with inheritance, interfaces, virtual functions, etc.
 
-GObject simplifies also the event-driven programming paradigm, with signals and properties. A property is basically an instance variable with a notify signal that is emitted when its value changes. Creating a GObject signal or property is a nice way to implement the Observer design pattern, that is, one or several objects \emph{observing} state changes of another object, by connecting function callbacks. The object \emph{emitting} the signal is not aware of which objects \emph{receive} the signal. GObject just keeps track of the list of callbacks to call. So adding a signal permits to decouple classes.
+GObject also simplifies the event-driven programming paradigm, with signals and properties. A property is basically an instance variable with a notify signal that is emitted when its value changes. Creating a GObject signal or property is a nice way to implement the Observer design pattern; that is, one or several objects \emph{observing} state changes of another object, by connecting function callbacks. The object \emph{emitting} the signal is not aware of which objects \emph{receive} the signal. GObject just keeps track of the list of callbacks to call. So adding a signal permits decoupling classes.
 
 It is recommended to create GObject classes for writing a GLib/GTK+ application. Unfortunately the code is a little verbose, because the C language is not object-oriented. Boilerplate code is needed for some features, but don't be afraid, there are tools and scripts to generate the boilerplate.
 
 The GObject reference documentation contains introductory chapters: ``Concepts'' and ``Tutorial'', available at:\\
-\url{https://developer.gnome.org/gobject/stable/}
+\url{https://developer.gnome.org/gobject/stable/}.
